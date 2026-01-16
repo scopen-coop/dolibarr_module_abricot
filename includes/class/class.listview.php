@@ -526,12 +526,12 @@ class Listview
 			}
 		}
 
-		$search_button = '<div class="nowrap">';
+//		$search_button = '<div class="nowrap">';
 //		$search_button.= '<a href="#" onclick="Listview_submitSearch(this);" class="list-search-link">'.img_search().'</a>';
 //		$search_button.= '&nbsp;<a href="#" onclick="Listview_clearSearch(this);" class="list-reset-link">'.img_searchclear().'</a>';
-		$search_button.= img_search();
-		$search_button.= '&nbsp;'.img_searchclear();
-		$search_button.= '</div>';
+//		$search_button.= img_search();
+//		$search_button.= '&nbsp;'.img_searchclear();
+//		$search_button.= '</div>';
 
 		if($nb_search_in_bar>0 || !empty($TParam['list']['head_search']))
 		{
@@ -994,7 +994,7 @@ class Listview
 		$contextpage=md5($_SERVER['PHP_SELF'].$this->id);
 		if(!empty($TParam['allow-fields-select']))
 		{
-			$selectedfields = GETPOST('Listview'.$this->id.'_selectedfields');
+			$selectedfields = GETPOST('selectedfields');
 
 			if(!empty($selectedfields))
 			{
@@ -1043,7 +1043,7 @@ class Listview
 				}
 			}
 
-			$selectedfields = $this->form->multiSelectArrayWithCheckbox('Listview'.$this->id.'_selectedfields', $TFieldVisibility, $contextpage);	// This also change content of $arrayfields_0
+			$selectedfields = $this->form->multiSelectArrayWithCheckbox('selectedfields', $TFieldVisibility, $contextpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));	// This also change content of $arrayfields_0
 		}
 		else
         {
