@@ -526,12 +526,14 @@ class Listview
 			}
 		}
 
-		$search_button = '<div class="nowrap">';
+//		$search_button = '<div class="nowrap">';
 //		$search_button.= '<a href="#" onclick="Listview_submitSearch(this);" class="list-search-link">'.img_search().'</a>';
 //		$search_button.= '&nbsp;<a href="#" onclick="Listview_clearSearch(this);" class="list-reset-link">'.img_searchclear().'</a>';
-		$search_button.= img_search();
-		$search_button.= '&nbsp;'.img_searchclear();
-		$search_button.= '</div>';
+//		$search_button.= img_search();
+//		$search_button.= '&nbsp;'.img_searchclear();
+//		$search_button.= '</div>';
+		// Search buttons are now in the selectedfields column (showFilterAndCheckAddButtons)
+		$search_button = '';
 
 		if($nb_search_in_bar>0 || !empty($TParam['list']['head_search']))
 		{
@@ -898,6 +900,10 @@ class Listview
 			{
 				$out.='<tfoot><tr class="liste_total">';
 
+				// Empty cell of the selectedfields column on the same side as in the header (first with MAIN_CHECKBOX_LEFT_COLUMN)
+				$selectedfieldsFirst = (array_key_first($THeader) === 'selectedfields');
+				if ($selectedfieldsFirst) $out.= '<td class="selectedfields"></td>';
+
 				foreach ($THeader as $field => $head)
 				{
 					if (isset($TTotal[$field]))
@@ -909,7 +915,7 @@ class Listview
 					}
 				}
 
-				if (isset($THeader['selectedfields'])) $out.= '<td class="selectedfields"></td>';
+				if (isset($THeader['selectedfields']) && !$selectedfieldsFirst) $out.= '<td class="selectedfields"></td>';
 				$out.='</tr></tfoot>';
 			}
 		}
@@ -994,7 +1000,7 @@ class Listview
 		$contextpage=md5($_SERVER['PHP_SELF'].$this->id);
 		if(!empty($TParam['allow-fields-select']))
 		{
-			$selectedfields = GETPOST('Listview'.$this->id.'_selectedfields');
+			$selectedfields = GETPOST('selectedfields');
 
 			if(!empty($selectedfields))
 			{
@@ -1043,7 +1049,7 @@ class Listview
 				}
 			}
 
-			$selectedfields = $this->form->multiSelectArrayWithCheckbox('Listview'.$this->id.'_selectedfields', $TFieldVisibility, $contextpage);	// This also change content of $arrayfields_0
+			$selectedfields = $this->form->multiSelectArrayWithCheckbox('selectedfields', $TFieldVisibility, $contextpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));	// This also change content of $arrayfields_0
 		}
 		else
         {
@@ -1071,7 +1077,13 @@ class Listview
 		// Uniquement si au moins 1 valeur a été définie, sinon il y a un problème d'affichage entre du php 5 et 7
 		if ($rank_used) uasort($THeader,array('Listview','sortHeaderRank'));
 
-		if (!empty($selectedfields) && !empty($TParam['allow-fields-select'])) $THeader['selectedfields']['label']=$selectedfields;
+		if (!empty($selectedfields) && !empty($TParam['allow-fields-select'])) {
+			if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				$THeader = ['selectedfields' => ['label' => $selectedfields]] + $THeader;
+			} else {
+				$THeader['selectedfields'] = ['label' => $selectedfields];
+			}
+		}
 
 		return $THeader;
 	}
